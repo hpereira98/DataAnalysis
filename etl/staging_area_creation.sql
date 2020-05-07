@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `sa_northwind`.`sa_purchase` (
   `id_product` INT NOT NULL,
   `submitted_date` DATETIME NULL,
   `id_purchase` INT NULL,
+  `id_purchase_details` INT NULL,
   PRIMARY KEY (`purchase_key`))
 ENGINE = InnoDB;
 
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `sa_northwind`.`sa_sale` (
   `id_employee` INT NOT NULL,
   `order_date` DATETIME NULL,
   `id_sale` INT NULL,
+  `id_sale_details` INT NULL,
   PRIMARY KEY (`sale_key`))
 ENGINE = InnoDB;
 

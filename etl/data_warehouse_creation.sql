@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`local_dim` (
   `key_local` INT NOT NULL AUTO_INCREMENT,
   `country` VARCHAR(50) NULL,
   `city` VARCHAR(50) NULL,
-  PRIMARY KEY (`key_local`))
+  PRIMARY KEY (`key_local`),
+  UNIQUE INDEX `local_unique` (`country` ASC, `city` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -33,9 +34,10 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`supplier_dim` (
   `company` VARCHAR(50) NULL,
   `key_local` INT NOT NULL,
   `id_supplier` INT NULL,
-  `last_updated` DATETIME NULL,
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`key_supplier`),
   INDEX `fk_supplier_dim_local_dim1_idx` (`key_local` ASC) VISIBLE,
+  UNIQUE INDEX `id_supplier_UNIQUE` (`id_supplier` ASC) VISIBLE,
   CONSTRAINT `fk_supplier_dim_local_dim1`
     FOREIGN KEY (`key_local`)
     REFERENCES `dw_northwind`.`local_dim` (`key_local`)
@@ -56,8 +58,9 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`product_dim` (
   `standard_cost` DOUBLE NULL,
   `list_price` DOUBLE NOT NULL,
   `id_product` INT NULL,
-  `last_updated` DATETIME NULL,
-  PRIMARY KEY (`key_product`))
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  PRIMARY KEY (`key_product`),
+  UNIQUE INDEX `id_product_UNIQUE` (`id_product` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -71,7 +74,8 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`time_dim` (
   `year` INT NULL,
   `week_day` INT NULL,
   `full_date` DATETIME NULL,
-  PRIMARY KEY (`key_time`))
+  PRIMARY KEY (`key_time`),
+  UNIQUE INDEX `full_date_UNIQUE` (`full_date` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -86,11 +90,13 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`purchase_fact` (
   `key_product` INT NOT NULL,
   `key_time` INT NOT NULL,
   `id_purchase` INT NULL,
-  `last_updated` DATETIME NULL,
+  `id_purchase_details` INT NULL,
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`key_purchase`),
   INDEX `fk_purchase_fact_supplier_dim_idx` (`key_supplier` ASC) VISIBLE,
   INDEX `fk_purchase_fact_product_dim1_idx` (`key_product` ASC) VISIBLE,
   INDEX `fk_purchase_fact_time_dim1_idx` (`key_time` ASC) VISIBLE,
+  UNIQUE INDEX `purchase_unique` (`id_purchase` ASC, `id_purchase_details` ASC) VISIBLE,
   CONSTRAINT `fk_purchase_fact_supplier_dim`
     FOREIGN KEY (`key_supplier`)
     REFERENCES `dw_northwind`.`supplier_dim` (`key_supplier`)
@@ -118,9 +124,10 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`client_dim` (
   `full_name` VARCHAR(101) NULL,
   `key_local` INT NOT NULL,
   `id_client` INT NULL,
-  `last_updated` DATETIME NULL,
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`key_client`),
   INDEX `fk_client_dim_local_dim1_idx` (`key_local` ASC) VISIBLE,
+  UNIQUE INDEX `id_client_UNIQUE` (`id_client` ASC) VISIBLE,
   CONSTRAINT `fk_client_dim_local_dim1`
     FOREIGN KEY (`key_local`)
     REFERENCES `dw_northwind`.`local_dim` (`key_local`)
@@ -137,9 +144,10 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`shipper_dim` (
   `company` VARCHAR(50) NULL,
   `key_local` INT NOT NULL,
   `id_shipper` INT NULL,
-  `last_updated` DATETIME NULL,
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`key_shipper`),
   INDEX `fk_shipper_dim_local_dim1_idx` (`key_local` ASC) VISIBLE,
+  UNIQUE INDEX `id_shipper_UNIQUE` (`id_shipper` ASC) VISIBLE,
   CONSTRAINT `fk_shipper_dim_local_dim1`
     FOREIGN KEY (`key_local`)
     REFERENCES `dw_northwind`.`local_dim` (`key_local`)
@@ -156,8 +164,9 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`employee_dim` (
   `company` VARCHAR(50) NULL,
   `full_name` VARCHAR(101) NULL,
   `id_employee` INT NULL,
-  `last_updated` DATETIME NULL,
-  PRIMARY KEY (`key_employee`))
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  PRIMARY KEY (`key_employee`),
+  UNIQUE INDEX `id_employee_UNIQUE` (`id_employee` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -175,13 +184,15 @@ CREATE TABLE IF NOT EXISTS `dw_northwind`.`sale_fact` (
   `key_shipper` INT NOT NULL,
   `key_employee` INT NOT NULL,
   `id_sale` INT NULL,
-  `last_updated` DATETIME NULL,
+  `id_sale_details` INT NULL,
+  `last_updated` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   PRIMARY KEY (`key_sale`),
   INDEX `fk_sale_fact_product_dim1_idx` (`key_product` ASC) VISIBLE,
   INDEX `fk_sale_fact_time_dim1_idx` (`key_time` ASC) VISIBLE,
   INDEX `fk_sale_fact_client_dim1_idx` (`key_client` ASC) VISIBLE,
   INDEX `fk_sale_fact_shipper_dim1_idx` (`key_shipper` ASC) VISIBLE,
   INDEX `fk_sale_fact_employee_dim1_idx` (`key_employee` ASC) VISIBLE,
+  UNIQUE INDEX `sale_unique` (`id_sale` ASC, `id_sale_details` ASC) VISIBLE,
   CONSTRAINT `fk_sale_fact_product_dim1`
     FOREIGN KEY (`key_product`)
     REFERENCES `dw_northwind`.`product_dim` (`key_product`)
